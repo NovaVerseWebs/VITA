@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VITA - AI Chatbot</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+        body { background-color: #343541; color: white; display: flex; height: 100vh; position: relative; overflow: hidden; transition: background 0.3s; }
+        
+        .sidebar {
+            width: 250px;
+            background: #202123;
+            padding: 15px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .sidebar.hidden { width: 0; padding: 0; overflow: hidden; }
+        
+        .toggle-btn {
+            position: absolute;
+            left: 260px;
+            top: 10px;
+            padding: 10px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 2;
+            transition: left 0.3s ease;
+        }
+        
+        .sidebar.hidden + .toggle-btn {
+            left: 10px;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 900px;
+            margin: auto;
+            width: 100%;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 80vh;
+        }
+        
+        .chat-message {
+            padding: 12px;
+            border-radius: 10px;
+            max-width: 75%;
+            word-wrap: break-word;
+            line-height: 1.5;
+            position: relative;
+        }
+        
+        .user-message { background-color: #007AFF; align-self: flex-end; }
+        .bot-message { background-color: #2b2c36; align-self: flex-start; }
+        
+        .input-container {
+            display: flex;
+            padding: 12px;
+            background: #40414f;
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            border-radius: 10px;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        textarea {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            background: #222;
+            color: white;
+            resize: none;
+            height: 50px;
+            min-height: 50px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        button {
+            padding: 14px;
+            border: none;
+            background: #007AFF;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .typing-indicator {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        
+        .info-message {
+            text-align: center;
+            font-size: 14px;
+            color: #ccc;
+            margin-top: 10px;
+        }
+
+        .logo-container {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-container img {
+            width: 50px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar hidden" id="sidebar">
+        <button class="new-chat-btn" onclick="startNewChat()">+ New Chat</button>
+        <h2>Chat History</h2>
+        <ul class="chat-history" id="chatHistory"></ul>
+    </div>
+    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+    <div class="chat-container">
+        <div class="chat-box" id="chatBox"></div>
+        <p class="typing-indicator" id="typingIndicator" style="display:none;">VITA is typing...</p>
+        <p class="info-message">VITA can make mistakes. Check info given.</p>
+        <div class="input-container">
+            <textarea id="userInput" placeholder="Type your message..." onkeydown="handleKeyPress(event)"></textarea>
+            <button onclick="sendMessage()">↑</button>
+        </div>
+    </div>
+    <div class="logo-container">
+        <img src="Images/VITA LOGO.png" alt="VITA LOGO">
+        <span>VITA ALPHA</span>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            let sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("hidden");
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function startNewChat() {
+            document.getElementById("chatBox").innerHTML = "";
+        }
+
+        async function getAIResponse(userMessage) {
+            const apiUrl = "/api/chat";
+            const requestBody = { userMessage };
+            try {
+                document.getElementById("typingIndicator").style.display = "block";
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(requestBody),
+                });
+                document.getElementById("typingIndicator").style.display = "none";
+                const data = await response.json();
+                return data.response || "I'm sorry, I couldn't generate a response.";
+            } catch (error) {
+                console.error("API Error:", error);
+                return "An error occurred while fetching the AI response.";
+            }
+        }
+        async function sendMessage() {
+            let messageInput = document.getElementById("userInput");
+            let message = messageInput.value.trim();
+            if (!message) return;
+            displayMessage(message, "user");
+            messageInput.value = "";
+            let response = await getAIResponse(message);
+            displayMessage(response, "bot");
+        }
+        function displayMessage(message, sender) {
+            let chatBox = document.getElementById("chatBox");
+            let messageDiv = document.createElement("div");
+            messageDiv.classList.add("chat-message", sender === "user" ? "user-message" : "bot-message");
+            messageDiv.textContent = message;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
