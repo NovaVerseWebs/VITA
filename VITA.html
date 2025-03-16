@@ -155,11 +155,7 @@
             <button onclick="sendMessage()">↑</button>
         </div>
     </div>
-    <div class="logo-container">
-        <img src="Images/VITA LOGO.png" alt="VITA LOGO">
-        <span>VITA ALPHA</span>
-    </div>
-
+    
     <script>
         function toggleSidebar() {
             let sidebar = document.getElementById("sidebar");
@@ -178,8 +174,9 @@
         }
 
         async function getAIResponse(userMessage) {
-            const apiUrl = "/api/chat";
-            const requestBody = { userMessage };
+            const apiKey = "AIzaSyB30DMHg2oGseCY2dTNNtfpeP8WGF-PJNY";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const requestBody = { contents: [{ role: "user", parts: [{ text: userMessage }] }] };
             try {
                 document.getElementById("typingIndicator").style.display = "block";
                 const response = await fetch(apiUrl, {
@@ -189,7 +186,7 @@
                 });
                 document.getElementById("typingIndicator").style.display = "none";
                 const data = await response.json();
-                return data.response || "I'm sorry, I couldn't generate a response.";
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't generate a response.";
             } catch (error) {
                 console.error("API Error:", error);
                 return "An error occurred while fetching the AI response.";
