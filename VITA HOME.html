@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vita - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+    background: url('Images/New\ Project\ -\ 2025-03-16T150908.095\ \(1\).png') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    animation: fadeIn 1s ease-in-out;
+}
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        header {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 20px;
+            text-align: center;
+            animation: slideDown 0.5s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: flex-start;
+            gap: 30px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            transition: color 0.3s ease-in-out;
+        }
+        nav ul li a:hover {
+            color: #00AEEF;
+        }
+        section {
+            width: 50%;
+            max-width: 400px;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 12px;
+            text-align: left;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        h2 {
+            color: #00AEEF;
+            margin-bottom: 15px;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.85);
+            font-size: 14px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+    <script>
+        function startChat() {
+            let loadingScreen = document.createElement("div");
+            loadingScreen.style.position = "fixed";
+            loadingScreen.style.top = "0";
+            loadingScreen.style.left = "0";
+            loadingScreen.style.width = "100%";
+            loadingScreen.style.height = "100%";
+            loadingScreen.style.background = "#000";
+            loadingScreen.style.color = "#fff";
+            loadingScreen.style.display = "flex";
+            loadingScreen.style.justifyContent = "center";
+            loadingScreen.style.alignItems = "center";
+            loadingScreen.style.fontSize = "24px";
+            loadingScreen.style.animation = "fadeIn 1s ease-in-out";
+            loadingScreen.innerText = "Starting...";
+            document.body.appendChild(loadingScreen);
+            
+            setTimeout(() => {
+                window.location.href = "VITA.html";
+            }, 3000);
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>VITA</h1>
+    </header>
+    
+    <section id="about">
+        <h2>About Vita</h2>
+        <p>Vita is an advanced chatbot designed to assist users with various tasks, providing intelligent responses and support.</p>
+    </section>
+    
+    <section id="downloads">
+        <h2>Downloads</h2>
+        <p>Coming soon! Stay tuned for Vita's official app releases.</p>
+    </section>
+    
+    <section id="get-started">
+        <h2>Get Started Chatting!</h2>
+        <button onclick="window.location.href='https://novaversewebs.github.io/VITA/VITA.html'">Get Started</button>
+    </section>
+    <footer>
+        <p>&copy; 2025 Vita. All rights reserved.</p>
+    </footer>
+</body>
+</html>
